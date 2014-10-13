@@ -1,3 +1,8 @@
+/***********************************************************
+ * Denise Bradley, Baker College CS351, Lab 2
+ * 10/08/14 
+ ***********************************************************/
+
 package com.example.mymusiclist;
 
 import java.text.SimpleDateFormat;
