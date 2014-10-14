@@ -17,7 +17,6 @@ public class MyMusicListService {
 	{
 		songs = new ArrayList<Song>();
 		
-		songs.add(new Song("Who Am I", "Casting Crowns", "Casting Crowns", getDate(2003, 10, 7)));
 		songs.add(new Song("He Knows My Name", "Francesca Battistelli", "If We're Honest", getDate(2014, 3, 18)));
 		songs.add(new Song("Fix My Eyes", "for King & Country", "Run Wild. Live Free. Love Strong.", getDate(2014, 9, 16)));
 		songs.add(new Song("Moon Trance", "Lindsey Striling", "Lindsey Stirling (Deluxe Version)", getDate(2013, 10, 29)));
@@ -27,7 +26,8 @@ public class MyMusicListService {
 		songs.add(new Song("Boys Round Here", "Blake Shelton", "Based On A True Story...", getDate(2013, 3, 26)));
 		songs.add(new Song("Moonlight Serenade", "Glenn Miller & His Orchestra", "Glenn Miller - Greatest Hits", getDate(1996, 4, 16)));
 		songs.add(new Song("It's Go Time", "Pieces of a Dream", "No Assembly Required", getDate(2004, 4, 27)));
-	
+		songs.add(new Song("Your Great Name", "Natalie Grant", "Love Revolution", getDate(2010, 8, 24)));
+		
 	}
 	
 	public List<Song>findAll(){

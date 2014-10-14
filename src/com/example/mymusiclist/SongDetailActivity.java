@@ -101,17 +101,9 @@ import util.UrlFetchUtil;
   				Log.d("",json);
   	 
   				//search google for images
-  				//ImageResults imageResults = new Gson().fromJson(json, ImageResults.class);
-  				ObjectMapper mapper = new ObjectMapper();
-  	            ImageResults imageResults = null;
-  	            	          
-  	            try {
-  	                imageResults = mapper.readValue(json, ImageResults.class);
-  	            } catch (IOException e) {
-  	                e.printStackTrace();
-  	            }
-  				
-  				//attempt at least three times to get an image
+  	            ImageResults imageResults = new Gson().fromJson(json, ImageResults.class);
+  	            
+  	            //attempt at least three times to get an image
   				String image2get = getRandomImageUrl(imageResults,0);
   	 
   				//return image
@@ -127,11 +119,7 @@ import util.UrlFetchUtil;
   			}
   	 
   			private String getJSON(String url, int timeout) {
-  				
-  				
   				HttpURLConnection c = null;
-  				
-  				
   				try {
   					URL u = new URL(url);
   					c = (HttpURLConnection) u.openConnection();
@@ -142,13 +130,7 @@ import util.UrlFetchUtil;
   					c.setConnectTimeout(timeout);
   					c.setReadTimeout(timeout);
   					c.connect();
-  					String RIATMessage = "Inside getJSON() after Try after connect";
-    	  	  		  Log.e(TAG, RIATMessage);
   					int status = c.getResponseCode();
-  					
-  	  	  		
-  					
-  	 
   					switch (status) {
   						case 200:
   						case 201:
@@ -163,82 +145,74 @@ import util.UrlFetchUtil;
   									return sb.toString();
   						}
   				} catch (MalformedURLException ex) {
-  					String RIATMessage = "Inside getJSON() inside MalformedURLException";
-  	  	  		  Log.e(TAG, RIATMessage);
   					Log.e("", ex.getMessage());
   				} catch (IOException ex) {
-  					String RIATMessage = "Inside getJSON() inside IOException";
-    	  	  		  Log.e(TAG, RIATMessage);
   					Log.e("", ex.getMessage());
   				}
   				return "";
   			}
   				
   			private String getRandomImageUrl(ImageResults imageResults, int count){
-  				int lCount = count;
-  	 
-  				if (lCount>3){
-  					Log.e(TAG,"Unable to retrieve an image on three attempts");
-  					return null;
-  				}
-  				
-  				List<Result> results = imageResults.getResponseData().getResults();
-  	 
-  				int randomNumber = ( int )( Math.random() * results.size());
-  	 
-  				for(int i = randomNumber; i<results.size(); i++){
-  					Result result = results.get(i);
-  	 
-  					if (Integer.parseInt(result.getHeight())<=600 &&
-  							Integer.parseInt(result.getWidth())<=800){
-  						return result.getUnescapedUrl();
-  					}
-  					else{
-  						i++;
-  					}
-  				}
-  	 
-  				return getRandomImageUrl(imageResults, count);
-  			}
+  	            int lCount = count;
+
+  	            if (lCount>3){
+  	                Log.e(TAG,"Unable to retrieve an image on three attempts");
+  	                return null;
+  	            }
+  	            List<Result> results = imageResults.getResponseData().getResults();
+
+  	            int randomNumber = ( int )( Math.random() * results.size());
+
+  	            for(int i = randomNumber; i<results.size(); i++){
+  	                Result result = results.get(i);
+
+  	                if (Integer.parseInt(result.getHeight())<=600 &&
+  	                    Integer.parseInt(result.getWidth())<=800){
+  	                    return result.getUnescapedUrl();
+  	                }
+  	                else{
+  	                    i++;
+  	                }
+  	            }
+
+  	            return getRandomImageUrl(imageResults, count);
+  	        }
   			
   			private Bitmap fetchImage(String strUrl){
-  				if(strUrl==null){
-  					//return default image if nothing is loaded
-  					return BitmapFactory.decodeResource(context.getResources(),
-  							R.drawable.loading);
-  				}
-  	 
-  				try {
-  					URL url = new URL(strUrl);
-  					HttpURLConnection httpCon = (HttpURLConnection) url.openConnection();
-  					if(httpCon.getResponseCode()!=200){
-  						throw new Exception("Failed to Connect");
-  					}
-  	 
-  					InputStream is = httpCon.getInputStream();
-  					return BitmapFactory.decodeStream(is);
-  				} catch (MalformedURLException e) {
-  					Log.e(TAG, "malformedurl: " + strUrl);
-  					e.printStackTrace();
-  				} catch (IOException e) {
-  					e.printStackTrace();
-  				} catch (Exception e) {
-  					e.printStackTrace();
-  				}
-  				
-  				//return default image if nothing is loaded
-  				return BitmapFactory.decodeResource(context.getResources(),
-  						R.drawable.loading);
-  			}
+  	            if(strUrl==null){
+  	                //return default image if nothing is loaded
+  	                return BitmapFactory.decodeResource(context.getResources(),
+  	                        R.drawable.loading);
+  	            }
+  	            try {
+  	                URL url = new URL(strUrl);
+  	                HttpURLConnection httpCon = (HttpURLConnection) url.openConnection();
+  	                if(httpCon.getResponseCode()!=200){
+  	                    throw new Exception("Failed to Connect");
+  	                }
+
+  	                InputStream is = httpCon.getInputStream();
+  	                return BitmapFactory.decodeStream(is);
+  	            } catch (MalformedURLException e) {
+  	                Log.e(TAG, "malformedurl: " + strUrl);
+  	                e.printStackTrace();
+  	            } catch (IOException e) {
+  	                e.printStackTrace();
+  	            } catch (Exception e) {
+  	                e.printStackTrace();
+  	            }
+  	            //return default image if nothing is loaded
+  	            return BitmapFactory.decodeResource(context.getResources(),
+  	                    R.drawable.loading);
+  	        }
   			
   			private String joinString(String... params){
-  				StringBuilder sb = new StringBuilder();
-  				for(String param:params){
-  					param = param.replace(" ","+");//remove spaces
-  					sb.append(param + "+");
-  				}
-  				
-  				return sb.toString().substring(0, sb.toString().length() - 1);
-  			}
+  	            StringBuilder sb = new StringBuilder();
+  	            for(String param:params){
+  	                param = param.replace(" ","+");//remove spaces
+  	                sb.append(param + "+");
+  	            }
+  	            return sb.toString().substring(0, sb.toString().length() - 1);
+  	        }
   		}
   	}
