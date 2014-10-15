@@ -6,12 +6,16 @@
 package com.example.mymusiclist;
 
     import android.app.Activity;
+    import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -91,9 +95,7 @@ import util.UrlFetchUtil;
   				this.context=context;
   				
   			}
-  			
-  			
-  			
+    			
   			@Override
   			protected Bitmap doInBackground(String... params) {
   				
@@ -105,9 +107,16 @@ import util.UrlFetchUtil;
   	            
   	            //attempt at least three times to get an image
   				String image2get = getRandomImageUrl(imageResults,0);
-  	 
+  				
   				//return image
-  				return fetchImage(image2get);
+  				Bitmap bitmap = fetchImage(image2get);
+  	            if(bitmap!=null){
+  	                return bitmap;
+  	            }else{
+  	                buildSimpleNotification("Failed to load image",params[0]);
+  	                return BitmapFactory.decodeResource(context.getResources(),
+  	                        R.drawable.loading);
+  	            }
   			}
   	 
   			@Override
@@ -153,7 +162,11 @@ import util.UrlFetchUtil;
   			}
   				
   			private String getRandomImageUrl(ImageResults imageResults, int count){
-  	            int lCount = count;
+  				if (imageResults==null){
+  	                return null;
+  	            }
+  				
+  				int lCount = count;
 
   	            if (lCount>3){
   	                Log.e(TAG,"Unable to retrieve an image on three attempts");
@@ -174,15 +187,14 @@ import util.UrlFetchUtil;
   	                    i++;
   	                }
   	            }
-
+  	            count++;
   	            return getRandomImageUrl(imageResults, count);
   	        }
   			
   			private Bitmap fetchImage(String strUrl){
   	            if(strUrl==null){
-  	                //return default image if nothing is loaded
-  	                return BitmapFactory.decodeResource(context.getResources(),
-  	                        R.drawable.loading);
+  	            	return null;
+  	                
   	            }
   	            try {
   	                URL url = new URL(strUrl);
@@ -214,5 +226,30 @@ import util.UrlFetchUtil;
   	            }
   	            return sb.toString().substring(0, sb.toString().length() - 1);
   	        }
+  			
+  			private void buildSimpleNotification(String msg, String name){
+  	  			Intent refreshIntent = new Intent(context, SongDetailActivity.class);
+  	            refreshIntent.putExtra(SONG_TITLE, name);
+  	            PendingIntent pendingIntent = PendingIntent.getActivity(context,0,refreshIntent,0);
+  	            
+  	            NotificationCompat.Builder builder =
+  	  					new NotificationCompat.Builder(context)
+  	  					.setContentTitle("MyMusicList")
+  	  					.setContentText(msg)
+  	  					.setTicker(msg)
+  	  					.setSmallIcon(R.drawable.info)
+  	  					//.setAutoCancel(true) - original
+  	  					.setAutoCancel(false)
+  	  					.addAction(R.drawable.refresh, "Reload", pendingIntent);
+  	  					
+  	  			NotificationManager notificationManager =
+  	  					(NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+  	  					
+  	  			notificationManager.notify(0, builder.build());
+  	  		Log.e(TAG,"Inside buildSimpleNotification(), after notificationManager.notify");
+  	  				
+  	  		}
   		}
+  		
+  		
   	}
