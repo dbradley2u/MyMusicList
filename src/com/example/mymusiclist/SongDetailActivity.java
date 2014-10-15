@@ -1,6 +1,6 @@
 /***********************************************************
- * Denise Bradley, Baker College CS351, Lab 2
- * 10/08/14 
+ * Denise Bradley, Baker College CS351, Lab 3A & 3B
+ * 10/15/14 
  ***********************************************************/
 
 package com.example.mymusiclist;
@@ -238,8 +238,8 @@ import util.UrlFetchUtil;
   	  					.setContentText(msg)
   	  					.setTicker(msg)
   	  					.setSmallIcon(R.drawable.info)
-  	  					//.setAutoCancel(true) - original
-  	  					.setAutoCancel(false)
+  	  					.setAutoCancel(true)
+  	  					//.setAutoCancel(false)
   	  					.addAction(R.drawable.refresh, "Reload", pendingIntent);
   	  					
   	  			NotificationManager notificationManager =
