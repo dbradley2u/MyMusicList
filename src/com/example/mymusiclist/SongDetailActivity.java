@@ -110,7 +110,7 @@ import util.UrlFetchUtil;
   				
   				//return image
   				Bitmap bitmap = fetchImage(image2get);
-  	            if(bitmap!=null){
+  				if(bitmap!=null){
   	                return bitmap;
   	            }else{
   	                buildSimpleNotification("Failed to load image",params[0]);
@@ -228,10 +228,11 @@ import util.UrlFetchUtil;
   	        }
   			
   			private void buildSimpleNotification(String msg, String name){
-  	  			Intent refreshIntent = new Intent(context, SongDetailActivity.class);
+  				
+  				Intent refreshIntent = new Intent(getApplicationContext(), SongDetailActivity.class);
   	            refreshIntent.putExtra(SONG_TITLE, name);
-  	            PendingIntent pendingIntent = PendingIntent.getActivity(context,0,refreshIntent,0);
-  	            
+  	            PendingIntent pendingIntent = PendingIntent.getActivity(getApplicationContext(),0,refreshIntent,0);
+	            
   	            NotificationCompat.Builder builder =
   	  					new NotificationCompat.Builder(context)
   	  					.setContentTitle("MyMusicList")
@@ -239,15 +240,14 @@ import util.UrlFetchUtil;
   	  					.setTicker(msg)
   	  					.setSmallIcon(R.drawable.info)
   	  					.setAutoCancel(true)
-  	  					//.setAutoCancel(false)
+  	  					.setOngoing(false)
   	  					.addAction(R.drawable.refresh, "Reload", pendingIntent);
-  	  					
-  	  			NotificationManager notificationManager =
+  	  			
+  	            NotificationManager notificationManager =
   	  					(NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-  	  					
-  	  			notificationManager.notify(0, builder.build());
-  	  		Log.e(TAG,"Inside buildSimpleNotification(), after notificationManager.notify");
-  	  				
+  	  			
+  	            notificationManager.notify(0, builder.build());
+  	            notificationManager.cancel(0);
   	  		}
   		}
   		
