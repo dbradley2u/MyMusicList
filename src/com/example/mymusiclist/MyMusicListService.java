@@ -1,6 +1,6 @@
 /***********************************************************
- * Denise Bradley, Baker College CS351, Lab 3A & 3B
- * 10/15/14
+ * Denise Bradley, Baker College CS351, Lab 4A & 4B
+ * 10/22/14
  ***********************************************************/
 
 package com.example.mymusiclist;

@@ -1,24 +1,26 @@
 /***********************************************************
- * Denise Bradley, Baker College CS351, Lab 3A & 3B
- * 10/15/14 
+ * Denise Bradley, Baker College CS351, Lab 4A & 4B
+ * 10/22/14 
  ***********************************************************/
 
 package com.example.mymusiclist;
 
     import android.app.Activity;
-    import android.app.Notification;
+import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.MediaPlayer;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -43,6 +45,8 @@ import util.UrlFetchUtil;
   		private static final SimpleDateFormat df = new SimpleDateFormat("MMM d, yyyy (EEE)");
   		private static final String SONG_TITLE = "song_title";
   		private static final String TAG = "MusicList";
+  		private MediaPlayer mClickSound;
+  		private MediaPlayer mFailSound;
   	 
   		@Override
   		protected void onCreate(Bundle savedInstanceState) {
@@ -51,7 +55,7 @@ import util.UrlFetchUtil;
   				setContentView(R.layout.activity_song_detail);
   				Intent intent = getIntent();
   				String name = intent.getStringExtra(SONG_TITLE);
-  				Song song = new MyMusicListService().findOne(name);
+  				final Song song = new MyMusicListService().findOne(name);
   				Log.d(TAG, "Song was passed in to new Activity: " + song.getName());
   	 
   				TextView songName = (TextView) findViewById(R.id.textViewSongTitleText);
@@ -67,6 +71,23 @@ import util.UrlFetchUtil;
   				songDate.setText(df.format(song.getPublishedDate()));
   	 
   				new RandomImageAsyncTask(this).execute(song.getName(),song.getAlbum(),song.getArtist());
+  				
+  				mClickSound = MediaPlayer.create(this, R.raw.click);
+  				
+  				final ImageView imageView = (ImageView)findViewById(R.id.imageViewSong);
+  				imageView.setOnClickListener(new View.OnClickListener() {
+					
+					@Override
+					public void onClick(View v) {
+						// TODO Auto-generated method stub
+						imageView.setImageResource(R.drawable.loading);
+						mClickSound.start();
+						new RandomImageAsyncTask(SongDetailActivity.this).execute(song.getName(),
+								song.getAlbum(), song.getArtist());
+						
+					}
+				});
+  				
   		}
   	 
   		@Override
@@ -88,6 +109,20 @@ import util.UrlFetchUtil;
   			return super.onOptionsItemSelected(item);
   		}
   	 
+  		@Override
+  	    protected void onDestroy() {
+  	        super.onDestroy();
+  	        if(mClickSound!=null){
+  	            mClickSound.stop();
+  	            mClickSound.release();
+  	            mClickSound = null;
+  	        }
+  	        if(mFailSound!=null){
+  	            mFailSound.stop();
+  	            mFailSound.release();
+  	            mFailSound = null;
+  	        }
+  	    }
   		class RandomImageAsyncTask extends AsyncTask<String, Integer, Bitmap> {
   			
   			private Context context;
@@ -113,7 +148,9 @@ import util.UrlFetchUtil;
   				if(bitmap!=null){
   	                return bitmap;
   	            }else{
-  	                buildSimpleNotification("Failed to load image",params[0]);
+  	                mFailSound = MediaPlayer.create(context, R.raw.wrong);
+  	                mFailSound.start();
+  	            	buildSimpleNotification("Failed to load image",params[0]);
   	                return BitmapFactory.decodeResource(context.getResources(),
   	                        R.drawable.loading);
   	            }
